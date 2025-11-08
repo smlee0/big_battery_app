@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Big Battery</string>
+    <string name="widget_charging_icon">충전 상태 아이콘</string>
+</resources>
