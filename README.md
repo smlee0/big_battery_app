@@ -4,8 +4,9 @@
 
 ## 📷 Capture Swipe
 
-| ![App Overview](docs/images/placeholder_app.png) | ![Home Widget – Large](docs/images/placeholder_home_1.png) | ![Home Widget – Compact](docs/images/placeholder_home_2.png) | ![Home Widget – Charging](docs/images/placeholder_home_3.png) |
-| --- | --- | --- | --- |
+| ![앱 홈 – 밝은 테마](docs/images/placeholder_app_home_1.png) | ![앱 홈 – 다크 테마](docs/images/placeholder_app_home_2.png) |
+| --- | --- |
+| ![홈 위젯 – 기본](docs/images/placeholder_widget_1.png) | ![홈 위젯 – 충전 중](docs/images/placeholder_widget_2.png) |
 
 > 이미지는 `docs/images/` 폴더에서 관리하며, 새 캡처를 촬영하면 동일한 파일명을 교체하거나 표를 확장하면 됩니다.
 
@@ -16,8 +17,14 @@
 - **큰 배터리 카드**: `BatteryWidget`이 퍼센트와 충전 상태를 크게 보여 주고 남은 용량 구간에 맞춰 색을 변경합니다.
 - **실시간 스트림**: `BatteryProvider`가 `battery_plus` 스트림과 네이티브 위젯 브로드캐스트를 모두 구독해 앱/홈 위젯을 동시에 갱신합니다.
 - **저전력 알림**: 잔량 20% 이하 & 미충전 시 `flutter_local_notifications`로 경고 알림을 발송하고 Android 13+ 권한 요청을 처리합니다.
-- **접근성 설정**: 글꼴 크기, 고대비 모드, 라이트/다크 테마, 자동 새로고침을 설정 화면에서 토글한 뒤 `shared_preferences`에 저장합니다.
-- **안드로이드 홈 위젯**: `BatteryStatusWidget`이 충전 이벤트를 브로드캐스트로 수신해 앱 실행 여부와 관계없이 상태를 반영합니다.
+- **간결한 설정**: 글꼴 크기, 라이트/다크 테마, 저전력 알림 여부만 남겨 사용성이 단순해졌으며 모든 값은 `shared_preferences`에 저장됩니다.
+- **안드로이드 홈 위젯**: `BatteryStatusWidget`이 충전 이벤트 브로드캐스트와 위젯 내 새로고침 버튼으로 앱 실행 여부와 관계없이 상태를 반영합니다.
+
+## 현재 버전 하이라이트
+
+- 앱 홈 상세 카드에서 배터리 상태/동기화 시각/현재 테마를 한눈에 확인하고, 위젯과 동일한 색상 체계를 적용했습니다.
+- 홈 위젯은 좌상단 충전 배지, 우상단 새로고침 버튼으로 고정 배치되어 UX가 단순합니다.
+- 고대비 테마는 기본 UI 팔레트로 통합해 별도 토글이 필요 없으며, 라이트/다크 전환만 유지합니다.
 
 ## 주의사항
 
@@ -48,7 +55,7 @@ lib/
  ├── providers/battery_provider.dart
  ├── screens/
  │    ├── home_screen.dart      # 배터리 대시보드
- │    └── settings_screen.dart  # 접근성/테마 설정
+ │    └── settings_screen.dart  # 글꼴/테마/알림 설정
  ├── services/
  │    ├── battery_service.dart
  │    └── notification_service.dart
@@ -66,9 +73,9 @@ android/app/src/main/kotlin/com/example/big_battery_widget_app/
 
 ## 안드로이드 홈 위젯 메모
 
-- `android/app/src/main/res/xml/battery_widget_info.xml`: 2x1 기본 크기, 30분 주기 자동 갱신, 가로 리사이즈 허용.
-- `BatteryWidgetUpdater`: 홈 위젯이 받을 수 있는 브로드캐스트를 처리하며 배터리 잔량에 따라 `widget_bg_high/medium/low` 배경을 적용합니다.
-- `BatteryStatusWidget`는 앱 위젯이 활성화될 때 ACTION_BATTERY_CHANGED 브로드캐스트 리시버를 런타임으로 등록해 앱이 종료된 상태에서도 즉시 갱신되도록 합니다.
+- `android/app/src/main/res/xml/battery_widget_info.xml`: 2x1 기본 크기, 가로 리사이즈 허용.
+- `BatteryWidgetUpdater`: 배터리 브로드캐스트를 받아 위젯 전면을 다시 그리며 배터리 잔량에 따라 `widget_bg_high/medium/low` 배경을 적용합니다.
+- `BatteryStatusWidget`은 충전 브로드캐스트를 런타임으로 등록하고, 위젯 내 새로고침 버튼을 통해 수동 갱신을 지원합니다.
 
 ### 설치 및 확인 절차
 1. `flutter install` 또는 `flutter run -d <deviceId>`로 기기에 앱을 설치합니다.

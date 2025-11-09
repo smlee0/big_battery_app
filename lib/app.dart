@@ -33,8 +33,8 @@ class BigBatteryWidgetApp extends StatelessWidget {
           return MaterialApp(
             title: 'Big Battery',
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.light(highContrast: settings.highContrast),
-            darkTheme: AppTheme.dark(highContrast: settings.highContrast),
+            theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
             themeMode: settings.themeMode,
             builder: (context, child) {
               final media = MediaQuery.of(context);

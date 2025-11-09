@@ -16,27 +16,12 @@ class BatteryDisplay extends StatelessWidget {
 
   Color _levelColor(BuildContext context) {
     if (status.level <= 20) {
-      return settings.highContrast ? Colors.redAccent : AppColors.alertRed;
+      return Colors.redAccent;
     }
-
     if (status.level <= 50) {
-      return settings.highContrast
-          ? Colors.orangeAccent
-          : AppColors.warningYellow;
+      return Colors.orangeAccent;
     }
-
-    return settings.highContrast
-        ? Colors.lightGreenAccent
-        : AppColors.safeGreen;
-  }
-
-  String _statusLabel() {
-    return switch (status.state) {
-      BatteryState.charging => '충전 중',
-      BatteryState.discharging => '배터리 사용 중',
-      BatteryState.full => '충전 완료',
-      _ => '상태 확인 중',
-    };
+    return Colors.lightGreenAccent;
   }
 
   @override
@@ -52,7 +37,7 @@ class BatteryDisplay extends StatelessWidget {
           children: [
             Text(
               '${status.level}%',
-              style: textTheme.displayMedium?.copyWith(
+              style: textTheme.displayLarge?.copyWith(
                 color: levelColor,
                 fontWeight: FontWeight.bold,
                 letterSpacing: -1,
@@ -68,14 +53,6 @@ class BatteryDisplay extends StatelessWidget {
                 ),
               ),
           ],
-        ),
-        const SizedBox(height: 12),
-        Text(
-          _statusLabel(),
-          style: textTheme.titleMedium?.copyWith(
-            color: levelColor,
-            fontWeight: FontWeight.w600,
-          ),
         ),
         if (status.errorMessage != null) ...[
           const SizedBox(height: 8),

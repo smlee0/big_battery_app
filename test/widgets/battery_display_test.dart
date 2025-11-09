@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const settings = BatterySettings(
-    textSize: BatteryTextSize.large,
-    themeMode: ThemeMode.light,
-    highContrast: false,
-    autoRefresh: false,
-  );
+const settings = BatterySettings(
+  textSize: BatteryTextSize.large,
+  themeMode: ThemeMode.light,
+);
 
   testWidgets('배터리 퍼센트를 표시한다', (tester) async {
     const status = BatteryStatus(

@@ -11,7 +11,7 @@ class AppColors {
 }
 
 class AppTheme {
-  static ThemeData light({required bool highContrast}) {
+  static ThemeData light() {
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primaryBlue,
@@ -20,18 +20,17 @@ class AppTheme {
     );
 
     return base.copyWith(
-      scaffoldBackgroundColor:
-          highContrast ? Colors.white : AppColors.background,
+      scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
-        backgroundColor: highContrast ? Colors.black : AppColors.primaryBlue,
-        foregroundColor: highContrast ? Colors.white : Colors.white,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
         centerTitle: true,
       ),
-      cardColor: highContrast ? Colors.white : Colors.white,
+      cardColor: Colors.white,
     );
   }
 
-  static ThemeData dark({required bool highContrast}) {
+  static ThemeData dark() {
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.blueGrey,
@@ -41,15 +40,13 @@ class AppTheme {
     );
 
     return base.copyWith(
-      scaffoldBackgroundColor:
-          highContrast ? Colors.black : const Color(0xFF121212),
+      scaffoldBackgroundColor: Colors.black,
       appBarTheme: AppBarTheme(
-        backgroundColor: highContrast ? Colors.black : const Color(0xFF1F1F1F),
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         centerTitle: true,
       ),
-      cardColor:
-          highContrast ? const Color(0xFF1F1F1F) : const Color(0xFF1E1E1E),
+      cardColor: const Color(0xFF1F1F1F),
     );
   }
 }

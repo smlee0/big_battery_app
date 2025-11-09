@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const settings = BatterySettings(
-    textSize: BatteryTextSize.extraLarge,
-    themeMode: ThemeMode.light,
-    highContrast: false,
-    autoRefresh: false,
-  );
+const settings = BatterySettings(
+  textSize: BatteryTextSize.extraLarge,
+  themeMode: ThemeMode.light,
+);
 
   testWidgets('BatteryWidget shows percent text', (tester) async {
     const status = BatteryStatus(level: 88, state: BatteryState.discharging);

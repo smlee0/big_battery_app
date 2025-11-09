@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../providers/battery_provider.dart';
-import '../utils/theme.dart';
 import 'battery_display.dart';
 
 class BatteryWidget extends StatelessWidget {
@@ -16,15 +15,10 @@ class BatteryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = settings.highContrast
-        ? [
-            Colors.black,
-            Colors.grey.shade900,
-          ]
-        : [
-            AppColors.primaryBlue,
-            AppColors.primaryBlue.withOpacity(0.75),
-          ];
+    final colors = [
+      Colors.black,
+      Colors.grey.shade900,
+    ];
 
     return Container(
       decoration: BoxDecoration(

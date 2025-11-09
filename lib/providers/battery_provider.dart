@@ -27,37 +27,28 @@ class BatterySettings {
   const BatterySettings({
     this.textSize = BatteryTextSize.extraLarge,
     this.themeMode = ThemeMode.light,
-    this.highContrast = false,
-    this.autoRefresh = true,
-    this.refreshInterval = const Duration(minutes: 1),
+    this.notificationsEnabled = true,
   });
 
   final BatteryTextSize textSize;
   final ThemeMode themeMode;
-  final bool highContrast;
-  final bool autoRefresh;
-  final Duration refreshInterval;
+  final bool notificationsEnabled;
 
   static const _textSizeKey = 'battery_text_size';
   static const _themeModeKey = 'battery_theme_mode';
-  static const _contrastKey = 'battery_high_contrast';
-  static const _autoRefreshKey = 'battery_auto_refresh';
+  static const _notificationKey = 'battery_notifications';
 
   double get textScaleFactor => textSize.scaleFactor;
 
   BatterySettings copyWith({
     BatteryTextSize? textSize,
     ThemeMode? themeMode,
-    bool? highContrast,
-    bool? autoRefresh,
-    Duration? refreshInterval,
+    bool? notificationsEnabled,
   }) {
     return BatterySettings(
       textSize: textSize ?? this.textSize,
       themeMode: themeMode ?? this.themeMode,
-      highContrast: highContrast ?? this.highContrast,
-      autoRefresh: autoRefresh ?? this.autoRefresh,
-      refreshInterval: refreshInterval ?? this.refreshInterval,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
     );
   }
 
@@ -77,16 +68,15 @@ class BatterySettings {
               orElse: () => themeMode,
             )
           : themeMode,
-      highContrast: prefs.getBool(_contrastKey) ?? highContrast,
-      autoRefresh: prefs.getBool(_autoRefreshKey) ?? autoRefresh,
+      notificationsEnabled:
+          prefs.getBool(_notificationKey) ?? notificationsEnabled,
     );
   }
 
   Future<void> persist(SharedPreferences prefs) async {
     await prefs.setString(_textSizeKey, textSize.name);
     await prefs.setString(_themeModeKey, themeMode.name);
-    await prefs.setBool(_contrastKey, highContrast);
-    await prefs.setBool(_autoRefreshKey, autoRefresh);
+    await prefs.setBool(_notificationKey, notificationsEnabled);
   }
 }
 
@@ -141,15 +131,12 @@ class BatteryProvider extends ChangeNotifier {
   BatterySettings _settings;
   StreamSubscription<BatteryState>? _batteryStateSubscription;
   StreamSubscription<BatterySnapshotUpdate>? _batterySnapshotSubscription;
-  Timer? _refreshTimer;
   bool _initialized = false;
-  bool _isRefreshing = false;
   bool _lowBatteryAlertActive = false;
 
   BatteryStatus get status => _status;
   BatterySettings get settings => _settings;
   bool get isInitialized => _initialized;
-  bool get isRefreshing => _isRefreshing;
 
   Future<void> initialize() async {
     if (_initialized) {
@@ -162,22 +149,19 @@ class BatteryProvider extends ChangeNotifier {
     if (!hasNativeStream) {
       _listenBatteryState();
     }
-    _maybeStartAutoRefresh();
     _initialized = true;
     notifyListeners();
   }
 
   Future<void> refreshBatteryStatus() async {
-    if (_isRefreshing) {
-      return;
-    }
-
-    _isRefreshing = true;
-    notifyListeners();
-
     try {
       final level = await batteryService.getBatteryLevel();
-      final state = await batteryService.getBatteryState();
+      final fetchedState = await batteryService.getBatteryState();
+      final state = fetchedState == BatteryState.unknown
+          ? (_status.state != BatteryState.unknown
+              ? _status.state
+              : BatteryState.discharging)
+          : fetchedState;
       _updateStatus(
         _status.copyWith(
           level: level,
@@ -193,9 +177,6 @@ class BatteryProvider extends ChangeNotifier {
           lastUpdated: DateTime.now(),
         ),
       );
-    } finally {
-      _isRefreshing = false;
-      notifyListeners();
     }
   }
 
@@ -207,13 +188,8 @@ class BatteryProvider extends ChangeNotifier {
     _updateSettings(_settings.copyWith(themeMode: mode));
   }
 
-  void toggleHighContrast(bool value) {
-    _updateSettings(_settings.copyWith(highContrast: value));
-  }
-
-  void toggleAutoRefresh(bool value) {
-    _updateSettings(_settings.copyWith(autoRefresh: value));
-    _maybeStartAutoRefresh();
+  void toggleNotifications(bool value) {
+    _updateSettings(_settings.copyWith(notificationsEnabled: value));
   }
 
   void _updateStatus(BatteryStatus status) {
@@ -273,6 +249,10 @@ class BatteryProvider extends ChangeNotifier {
   }
 
   void _maybeShowLowBatteryAlert(BatteryStatus status) {
+    if (!_settings.notificationsEnabled) {
+      _lowBatteryAlertActive = false;
+      return;
+    }
     final shouldAlert = status.isLow && !status.isCharging;
     if (shouldAlert && !_lowBatteryAlertActive) {
       _lowBatteryAlertActive = true;
@@ -287,23 +267,10 @@ class BatteryProvider extends ChangeNotifier {
     }
   }
 
-  void _maybeStartAutoRefresh() {
-    _refreshTimer?.cancel();
-    if (!_settings.autoRefresh) {
-      return;
-    }
-
-    _refreshTimer = Timer.periodic(
-      _settings.refreshInterval,
-      (_) => refreshBatteryStatus(),
-    );
-  }
-
   @override
   void dispose() {
     _batteryStateSubscription?.cancel();
     _batterySnapshotSubscription?.cancel();
-    _refreshTimer?.cancel();
     super.dispose();
   }
 }
