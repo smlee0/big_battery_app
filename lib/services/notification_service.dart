@@ -13,8 +13,9 @@ class NotificationService {
       return;
     }
 
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      'ic_battery_launcher',
+    );
     const initializationSettings = InitializationSettings(
       android: androidSettings,
     );

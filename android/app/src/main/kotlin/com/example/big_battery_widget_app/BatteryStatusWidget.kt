@@ -171,8 +171,8 @@ object BatteryWidgetUpdater {
 
     private fun resolveBackground(level: Int): Int {
         return when {
-            level >= 70 -> R.drawable.widget_bg_high
-            level >= 30 -> R.drawable.widget_bg_medium
+            level >= 51 -> R.drawable.widget_bg_high
+            level >= 21 -> R.drawable.widget_bg_medium
             else -> R.drawable.widget_bg_low
         }
     }
