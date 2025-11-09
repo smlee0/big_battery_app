@@ -60,4 +60,27 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/widgetChargeBadge"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_gravity="top|start"
+        android:layout_margin="12dp"
+        android:contentDescription="@string/widget_charging_icon"
+        android:scaleType="centerInside"
+        android:src="@drawable/widget_charge_icon"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/widgetRefreshButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="12dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/widget_refresh_button"
+        android:padding="2dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/widget_refresh_icon" />
+
 </FrameLayout>

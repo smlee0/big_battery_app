@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Big Battery</string>
     <string name="widget_charging_icon">충전 상태 아이콘</string>
+    <string name="widget_refresh_button">배터리 새로 고침</string>
 </resources>

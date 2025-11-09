@@ -1,5 +1,6 @@
 package com.example.big_battery_widget_app
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -21,12 +22,17 @@ class BatteryStatusWidget : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         when (intent.action) {
+            ACTION_REFRESH_WIDGET -> {
+                BatteryWidgetUpdater.updateAllWidgets(context)
+                scheduleNextUpdate(context)
+            }
             Intent.ACTION_BOOT_COMPLETED,
             Intent.ACTION_POWER_CONNECTED,
             Intent.ACTION_POWER_DISCONNECTED,
             AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {
                 registerBatteryReceiver(context)
                 BatteryWidgetUpdater.updateAllWidgets(context)
+                scheduleNextUpdate(context)
             }
         }
     }
@@ -34,12 +40,14 @@ class BatteryStatusWidget : AppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         registerBatteryReceiver(context)
+        scheduleNextUpdate(context)
         BatteryWidgetUpdater.updateAllWidgets(context)
     }
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         unregisterBatteryReceiver(context)
+        cancelScheduledUpdate(context)
     }
 
     override fun onUpdate(
@@ -62,6 +70,9 @@ class BatteryStatusWidget : AppWidgetProvider() {
 
     companion object {
         private var batteryChangeReceiver: BroadcastReceiver? = null
+        private const val ACTION_REFRESH_WIDGET =
+            "com.example.big_battery_widget_app.ACTION_REFRESH_WIDGET"
+        private const val UPDATE_INTERVAL_MS = 5 * 60 * 1000L
 
         private fun registerBatteryReceiver(context: Context) {
             if (batteryChangeReceiver != null) return
@@ -70,6 +81,7 @@ class BatteryStatusWidget : AppWidgetProvider() {
                 override fun onReceive(ctx: Context?, intent: Intent?) {
                     if (intent?.action == Intent.ACTION_BATTERY_CHANGED) {
                         BatteryWidgetUpdater.updateAllWidgets(appContext)
+                        scheduleNextUpdate(appContext)
                     }
                 }
             }
@@ -89,6 +101,54 @@ class BatteryStatusWidget : AppWidgetProvider() {
                 runCatching { appContext.unregisterReceiver(it) }
                 batteryChangeReceiver = null
             }
+        }
+
+        internal fun refreshPendingIntent(context: Context): PendingIntent {
+            return createRefreshPendingIntent(
+                context,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )!!
+        }
+
+        private fun scheduleNextUpdate(context: Context) {
+            val alarmManager =
+                context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+            val triggerAt = System.currentTimeMillis() + UPDATE_INTERVAL_MS
+            val pendingIntent = refreshPendingIntent(context)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.set(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+            }
+        }
+
+        private fun cancelScheduledUpdate(context: Context) {
+            val alarmManager =
+                context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+            val pendingIntent = createRefreshPendingIntent(
+                context,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE
+            ) ?: return
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+        }
+
+        private fun createRefreshPendingIntent(
+            context: Context,
+            flags: Int
+        ): PendingIntent? {
+            val intent = Intent(context, BatteryStatusWidget::class.java).apply {
+                action = ACTION_REFRESH_WIDGET
+            }
+            return PendingIntent.getBroadcast(context, 0, intent, flags)
         }
     }
 }
@@ -140,6 +200,19 @@ object BatteryWidgetUpdater {
                     if (isCompact) View.GONE else View.VISIBLE
                 )
                 setInt(R.id.widgetRoot, "setBackgroundResource", backgroundRes)
+                val badgeVisibility = if (snapshot.isCharging) View.VISIBLE else View.GONE
+                setViewVisibility(R.id.widgetChargeBadge, badgeVisibility)
+                if (snapshot.isCharging) {
+                    setImageViewResource(R.id.widgetChargeBadge, R.drawable.widget_charge_icon)
+                    setContentDescription(
+                        R.id.widgetChargeBadge,
+                        context.getString(R.string.widget_charging_icon)
+                    )
+                }
+                setOnClickPendingIntent(
+                    R.id.widgetRefreshButton,
+                    BatteryStatusWidget.refreshPendingIntent(context)
+                )
             }
             val launchIntent = Intent(context, MainActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(
