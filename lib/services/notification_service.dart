@@ -20,6 +20,7 @@ class NotificationService {
     );
 
     await _plugin.initialize(initializationSettings);
+    await _ensureAndroidPermissions();
   }
 
   Future<void> showLowBatteryAlert({
@@ -38,11 +39,33 @@ class NotificationService {
       priority: Priority.high,
     );
 
-    await _plugin.show(
-      1001,
-      '배터리가 $batteryLevel% 남았어요',
-      isCharging ? '현재 충전 중입니다.' : '충전을 시작해 주세요.',
-      const NotificationDetails(android: androidDetails),
-    );
+    try {
+      await _plugin.show(
+        1001,
+        '배터리가 $batteryLevel% 남았어요',
+        isCharging ? '현재 충전 중입니다.' : '충전을 시작해 주세요.',
+        const NotificationDetails(android: androidDetails),
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Failed to show notification: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> _ensureAndroidPermissions() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return;
+    }
+
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) {
+      return;
+    }
+
+    final granted = await androidPlugin.areNotificationsEnabled();
+    if (granted == null || !granted) {
+      await androidPlugin.requestNotificationsPermission();
+    }
   }
 }

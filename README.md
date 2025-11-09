@@ -1,44 +1,54 @@
-= Big Battery Widget App =
+# Big Battery Widget App
 
-== 개요 ==
-Big Battery Widget App은 Flutter로 제작된 배터리 정보 위젯 데모 애플리케이션이다. 커다란 배터리 카드 위젯, 실시간 상태 갱신, 저전력 알림, 접근성 설정, 설정 영속화 등 모바일 환경에서 배터리 상태를 직관적으로 확인하고 관리하는 데 초점을 맞추고 있다.
+> Flutter 기반으로 제작된 접근성 친화 배터리 모니터링 앱과 안드로이드 홈 위젯 샘플입니다. 실시간 배터리 스트림, 저전력 알림, 사용자 설정 영속화를 통해 실제 디바이스의 배터리 상태를 직관적으로 확인할 수 있습니다.
 
-== Flutter 실행 진단 ==
-현재 ``flutter run -d chrome`` 과 ``flutter doctor -v`` 모두 아래와 같은 오류로 실패한다.
+## 📷 Capture Swipe
 
- <syntaxhighlight lang="bash">
- /mnt/d/98.program/flutter/flutter_windows_3.32.5-stable/flutter/bin/internal/update_engine_version.sh: line 74: /mnt/d/98.program/flutter/flutter_windows_3.32.5-stable/flutter/bin/cache/engine.stamp: Permission denied
- </syntaxhighlight>
+| ![App Overview](docs/images/placeholder_app.png) | ![Home Widget – Large](docs/images/placeholder_home_1.png) | ![Home Widget – Compact](docs/images/placeholder_home_2.png) | ![Home Widget – Charging](docs/images/placeholder_home_3.png) |
+| --- | --- | --- | --- |
 
-Windows 파티션(``/mnt/d``)에 설치된 Flutter SDK를 WSL에서 실행하면 ``bin/cache`` 디렉터리를 갱신하는 순간 쓰기 권한이 거부된다. 문제를 해결하려면 아래 두 가지 방법 중 하나를 선택한다.
+> 이미지는 `docs/images/` 폴더에서 관리하며, 새 캡처를 촬영하면 동일한 파일명을 교체하거나 표를 확장하면 됩니다.
 
-=== 방법 1: WSL 내부로 Flutter SDK 복사 ===
- # ``mkdir -p ~/development``
- # ``cp -r /mnt/d/98.program/flutter/flutter_windows_3.32.5-stable/flutter ~/development/flutter``
- # ``echo 'export PATH="$HOME/development/flutter/bin:$PATH"' >> ~/.bashrc``
- # ``source ~/.bashrc``
- # ``flutter doctor -v``
-위 단계를 따르면 ``~/development/flutter/bin/cache`` 경로에 정상적으로 쓰기가 가능해진다.
+---
 
-=== 방법 2: Windows 환경에서만 Flutter 명령 실행 ===
-PowerShell 또는 CMD에서 동일한 SDK 경로로 이동한 뒤 ``flutter run`` 을 실행하면 권한 문제가 발생하지 않는다. 단, 이 경우 WSL에서는 Flutter 명령을 실행하지 않는다. 권한 문제가 해소된 뒤에는 반드시 ``flutter doctor -v`` 로 SDK와 디바이스 상태를 재확인한다.
+## 프로젝트 소개
 
-== 주요 기능 ==
-* '''큰 배터리 카드''' — ``BatteryWidget``이 퍼센트와 충전 상태를 크게 표시하고 배터리 수준에 따라 색상이 변한다.
-* '''실시간 상태 갱신''' — ``BatteryProvider``가 ``battery_plus`` 스트림을 구독하며 1분마다 자동 새로 고침한다.
-* '''저전력 알림''' — 배터리가 20% 이하이면서 충전 중이 아니면 ``flutter_local_notifications``로 경고 알림을 보낸다.
-* '''접근성 설정''' — 글씨 크기(크게/아주 크게), 고대비 모드, 라이트/다크 테마, 자동 갱신 여부를 설정 화면에서 토글할 수 있다.
-* '''설정 영속화''' — ``shared_preferences``에 환경을 저장하여 앱 재시작 후에도 동일한 설정을 유지한다.
+- **큰 배터리 카드**: `BatteryWidget`이 퍼센트와 충전 상태를 크게 보여 주고 남은 용량 구간에 맞춰 색을 변경합니다.
+- **실시간 스트림**: `BatteryProvider`가 `battery_plus` 스트림과 네이티브 위젯 브로드캐스트를 모두 구독해 앱/홈 위젯을 동시에 갱신합니다.
+- **저전력 알림**: 잔량 20% 이하 & 미충전 시 `flutter_local_notifications`로 경고 알림을 발송하고 Android 13+ 권한 요청을 처리합니다.
+- **접근성 설정**: 글꼴 크기, 고대비 모드, 라이트/다크 테마, 자동 새로고침을 설정 화면에서 토글한 뒤 `shared_preferences`에 저장합니다.
+- **안드로이드 홈 위젯**: `BatteryStatusWidget`이 충전 이벤트를 브로드캐스트로 수신해 앱 실행 여부와 관계없이 상태를 반영합니다.
 
-== 폴더 구조 ==
-<syntaxhighlight lang="text">
+## 주의사항
+
+1. **Flutter SDK 경로**  
+   - 현재 WSL에서는 `/mnt/d/.../flutter`가 PATH 상단에 있어 권한 문제가 자주 발생합니다.  
+     ```bash
+     export PATH="/mnt/c/smlee/02.Project/app/big_battery_widget_app/.flutter-sdk/bin:$PATH"
+     hash -r
+     flutter doctor -v
+     ```
+   - 영구 적용이 필요하면 `~/.bashrc` 또는 Windows Terminal 프로필에 동일한 PATH를 설정하세요.
+
+2. **WSL ↔ Windows 권한**  
+   - Windows 파티션(예: `/mnt/d`)에서 Flutter를 실행하면 `bin/cache` 갱신 시 `Permission denied`가 발생합니다. WSL 내부 경로로 복사하여 사용하거나 Windows에서만 Flutter 명령을 실행하세요.
+
+3. **네트워크 제한**  
+   - `flutter build apk --release`가 `storage.googleapis.com`에 접근하지 못하면 엔진 아티팩트를 내려받지 못해 실패합니다. 방화벽/프록시를 확인하고 재시도하세요.
+
+4. **알림 권한**  
+   - Android 13 이상에서는 `POST_NOTIFICATIONS` 권한이 필요합니다. 앱 최초 실행 시 권한 안내가 표시되지 않으면 `설정 > 애플리케이션 > 알림`에서 수동으로 허용해야 알림이 동작합니다.
+
+## 폴더 구조
+
+```text
 lib/
- ├── app.dart                  # Provider + MaterialApp 부트스트랩
- ├── main.dart                 # 서비스 초기화 진입점
+ ├── app.dart                   # Provider + MaterialApp 부트스트랩
+ ├── main.dart                  # 서비스 초기화 엔트리포인트
  ├── providers/battery_provider.dart
  ├── screens/
- │    ├── home_screen.dart     # BatteryWidgetScreen
- │    └── settings_screen.dart # 접근성/테마 설정
+ │    ├── home_screen.dart      # 배터리 대시보드
+ │    └── settings_screen.dart  # 접근성/테마 설정
  ├── services/
  │    ├── battery_service.dart
  │    └── notification_service.dart
@@ -48,23 +58,42 @@ lib/
  └── utils/theme.dart
 test/
  └── widgets/battery_display_test.dart
-</syntaxhighlight>
+android/app/src/main/kotlin/com/example/big_battery_widget_app/
+ ├── BatteryStatusWidget.kt         # AppWidgetProvider
+ ├── BatterySnapshotProvider.kt     # 네이티브 배터리 측정
+ └── MainActivity.kt                # EventChannel + Flutter 엔진
+```
 
-== 안드로이드 홈 위젯 ==
-* ``android/app/src/main/kotlin/com/example/big_battery_widget_app/BatteryStatusWidget.kt`` — ``AppWidgetProvider``가 현재 배터리 잔량과 충전 상태를 읽어 원격 뷰에 반영한다.
-* ``android/app/src/main/res/layout/widget_battery_meter.xml`` — 2x1 기본 크기를 갖는 카드 레이아웃으로 퍼센트·상태 텍스트, 진행 바, 충전 아이콘을 포함한다.
-* ``android/app/src/main/res/xml/battery_widget_info.xml`` — 위젯 메타데이터로 30분 주기 자동 갱신과 가로 방향 리사이즈(높이 1셀 고정, 너비 확장)를 정의한다.
+## 안드로이드 홈 위젯 메모
 
-=== 설치 및 확인 절차 ===
-# ``flutter install`` 또는 ``flutter run -d <android_device>`` 로 실제 기기나 에뮬레이터에 앱을 배포한다.
-# 홈 화면에서 길게 눌러 '''위젯''' 목록을 열고 “큰 배터리 위젯”을 2x1 크기로 추가한다.
-# 위젯을 길게 눌러 가로 리사이즈 핸들을 드래그하면 1행을 유지한 채 너비가 확장되어 더 긴 게이지 레이아웃이 적용된다.
-# 충전 케이블 연결/분리 또는 배터리 잔량 변화를 주면 위젯이 자동으로 새 데이터를 표시한다. 즉시 갱신이 필요하면 위젯을 탭해 앱을 연 뒤 알림 센터를 내렸다 닫거나 위젯 옵션에서 ‘새로 고침’을 선택한다.
+- `android/app/src/main/res/xml/battery_widget_info.xml`: 2x1 기본 크기, 30분 주기 자동 갱신, 가로 리사이즈 허용.
+- `BatteryWidgetUpdater`: 홈 위젯이 받을 수 있는 브로드캐스트를 처리하며 배터리 잔량에 따라 `widget_bg_high/medium/low` 배경을 적용합니다.
+- `BatteryStatusWidget`는 앱 위젯이 활성화될 때 ACTION_BATTERY_CHANGED 브로드캐스트 리시버를 런타임으로 등록해 앱이 종료된 상태에서도 즉시 갱신되도록 합니다.
 
-== 실행 방법 ==
-# 의존성 설치 — ``flutter pub get``
-# 정적 분석 — ``flutter analyze``
-# 테스트 — ``flutter test``
-# 앱 실행(예: Chrome) — ``flutter run -d chrome``
+### 설치 및 확인 절차
+1. `flutter install` 또는 `flutter run -d <deviceId>`로 기기에 앱을 설치합니다.
+2. 홈 화면에서 “큰 배터리 위젯”을 추가하고 필요하면 가로 크기를 확장합니다.
+3. 충전 케이블 연결/분리 혹은 배터리 잔량을 변화시키면 위젯이 즉시 새 데이터를 표시하고 배경색이 구간별로 바뀌는지 확인합니다.
 
-다른 디바이스를 사용하려면 ``flutter devices`` 로 타깃을 확인하고 원하는 디바이스 ID를 ``-d`` 옵션에 전달한다. Web 실행에서 렌더러가 필요하면 ``--web-renderer html`` 또는 ``--web-renderer canvaskit`` 옵션을 추가한다. 필요 시 ``flutter clean`` 으로 캐시를 초기화한 뒤 다시 ``flutter pub get`` 을 실행해 의존성 문제를 해결한다.
+## 개발/실행 가이드
+
+| 작업 | 명령 |
+| --- | --- |
+| 의존성 설치 | `flutter pub get` |
+| 정적 분석 | `flutter analyze` |
+| 위젯/단위 테스트 | `flutter test` |
+| 웹 실행 (예: Chrome) | `flutter run -d chrome` |
+| 디바이스 목록 | `flutter devices` |
+| 릴리스 APK | `flutter build apk --release` |
+
+필요 시 `flutter clean && flutter pub get`으로 캐시를 초기화한 뒤 다시 실행하세요. Web 빌드 렌더러가 필요하면 `--web-renderer html` 또는 `--web-renderer canvaskit`을 추가할 수 있습니다.
+
+## 트러블슈팅 체크리스트
+
+- Flutter 명령이 D: 드라이브 SDK를 가리킨다면 PATH를 수정하거나 `.flutter-sdk/bin`을 맨 앞에 둡니다.
+- `flutter doctor -v`에서 Android SDK가 감지되지 않으면 `flutter config --android-sdk <path>` 또는 Android Studio 설치가 필요합니다.
+- 네트워크 차단 환경에서는 필요한 ZIP을 미리 다운로드 후 `.flutter-sdk/bin/cache`에 수동 배치해 작업을 계속할 수 있습니다.
+
+---
+
+문의나 개선 제안은 이 레포지토리의 이슈 트래커에 등록해 주세요. PR 시 `flutter analyze`, `flutter test` 결과를 함께 공유하면 리뷰 속도가 빨라집니다.
