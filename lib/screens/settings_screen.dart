@@ -7,6 +7,10 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   static const routeName = '/settings';
+  static const _appName = 'Big Battery';
+  static const _appVersion = 'v0.2.0';
+  static const _developerEmail = '-';
+  static const _developerName = '이세만두🥟';
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +52,66 @@ class SettingsScreen extends StatelessWidget {
             onChanged: provider.toggleNotifications,
             subtitle: const Text('배터리 20% 이하일 때 알림을 받습니다.'),
           ),
+          const SizedBox(height: 24),
+          const _AppInfoCard(),
         ],
       ),
+    );
+  }
+}
+
+class _AppInfoCard extends StatelessWidget {
+  const _AppInfoCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('앱 정보', style: textTheme.titleMedium),
+            const SizedBox(height: 12),
+            const _InfoRow(label: '앱 이름', value: SettingsScreen._appName),
+            const SizedBox(height: 8),
+            const _InfoRow(label: '버전', value: SettingsScreen._appVersion),
+            const SizedBox(height: 8),
+            const _InfoRow(label: '개발자 이메일', value: SettingsScreen._developerEmail),
+            const SizedBox(height: 8),
+            const _InfoRow(label: '개발자 이름', value: SettingsScreen._developerName),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: textTheme.bodyMedium),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
     );
   }
 }
