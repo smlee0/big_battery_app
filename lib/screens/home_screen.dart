@@ -1,3 +1,4 @@
+// 배터리 대시보드와 상세 정보를 보여주는 홈 화면 위젯.
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import '../providers/battery_provider.dart';
 import '../widgets/battery_widget.dart';
 import 'settings_screen.dart';
 
+/// 홈 탭에서 배터리 카드·상세·설정 버튼을 제공하는 화면.
 class BatteryWidgetScreen extends StatelessWidget {
   const BatteryWidgetScreen({super.key});
 
@@ -54,6 +56,7 @@ class BatteryWidgetScreen extends StatelessWidget {
   }
 }
 
+/// 현재 상태·동기화 시각·테마 정보를 묶어 보여주는 카드.
 class _StatusCard extends StatelessWidget {
   const _StatusCard({required this.provider});
 

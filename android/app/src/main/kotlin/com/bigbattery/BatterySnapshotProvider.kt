@@ -1,3 +1,4 @@
+// 네이티브 API로 배터리 정보를 읽어 위젯/이벤트 채널에 전달하는 유틸.
 package com.bigbattery
 
 import android.content.Context
@@ -10,6 +11,9 @@ import android.view.View
 import java.util.Date
 import kotlin.math.roundToInt
 
+/**
+ * 배터리 잔량과 상태를 하나의 구조체로 묶은 모델.
+ */
 data class BatterySnapshot(
     val level: Int,
     val statusText: String,
@@ -21,9 +25,13 @@ data class BatterySnapshot(
     val chargeVisibility: Int get() = if (isCharging) View.VISIBLE else View.GONE
 }
 
+/**
+ * 배터리 브로드캐스트에서 스냅샷을 구해 Flutter 쪽에 넘겨주는 정적 헬퍼.
+ */
 object BatterySnapshotProvider {
 
     fun read(context: Context): BatterySnapshot {
+        // ACTION_BATTERY_CHANGED는 sticky라서 최근 값을 곧바로 읽을 수 있음
         val intent = registerStickyBatteryIntent(context)
         val manager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
 
@@ -34,6 +42,7 @@ object BatterySnapshotProvider {
             if (level >= 0 && scale > 0) ((level / scale.toFloat()) * 100).roundToInt() else -1
         } ?: -1
 
+        // 일부 기기에서 capacity가 -1을 반환하므로 인텐트 기반 수치를 보정
         val batteryLevel = capacity.takeIf { it in 0..100 } ?: fallbackLevel.coerceIn(0, 100)
         val status = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
         val plugged = intent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0

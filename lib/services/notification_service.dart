@@ -1,6 +1,8 @@
+// 로컬 알림 권한을 확인하고 저전력 알림을 발송하는 서비스.
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+/// 플랫폼별 로컬 알림 초기화 및 발송을 담당하는 유틸 클래스.
 class NotificationService {
   NotificationService({FlutterLocalNotificationsPlugin? plugin})
       : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
@@ -8,6 +10,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _plugin;
   static const _channelId = 'battery_alerts';
 
+  /// 앱 시작 시 알림 채널을 준비하고 권한을 확인한다.
   Future<void> initialize() async {
     if (kIsWeb) {
       return;
@@ -24,6 +27,7 @@ class NotificationService {
     await _ensureAndroidPermissions();
   }
 
+  /// 배터리 잔량과 충전 상태를 메시지로 표시하는 경고 알림.
   Future<void> showLowBatteryAlert({
     required int batteryLevel,
     required bool isCharging,
@@ -53,6 +57,7 @@ class NotificationService {
     }
   }
 
+  /// POST_NOTIFICATIONS 권한이 없으면 사용자에게 요청한다.
   Future<void> _ensureAndroidPermissions() async {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
       return;

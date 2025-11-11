@@ -1,3 +1,4 @@
+// Win32 창 생성을 추상화한 공통 베이스 클래스 선언.
 #ifndef RUNNER_WIN32_WINDOW_H_
 #define RUNNER_WIN32_WINDOW_H_
 
@@ -7,9 +8,7 @@
 #include <memory>
 #include <string>
 
-// A class abstraction for a high DPI-aware Win32 Window. Intended to be
-// inherited from by classes that wish to specialize with custom
-// rendering and input handling
+// 고해상도 Win32 창을 래핑하는 기본 클래스.
 class Win32Window {
  public:
   struct Point {
@@ -28,74 +27,61 @@ class Win32Window {
   Win32Window();
   virtual ~Win32Window();
 
-  // Creates a win32 window with |title| that is positioned and sized using
-  // |origin| and |size|. New windows are created on the default monitor. Window
-  // sizes are specified to the OS in physical pixels, hence to ensure a
-  // consistent size this function will scale the inputted width and height as
-  // as appropriate for the default monitor. The window is invisible until
-  // |Show| is called. Returns true if the window was created successfully.
+  // 제목/위치/크기를 받아 창을 생성한다. Show 호출 전까지는 숨김 상태다.
   bool Create(const std::wstring& title, const Point& origin, const Size& size);
 
-  // Show the current window. Returns true if the window was successfully shown.
+  // 현재 창을 화면에 표시한다.
   bool Show();
 
-  // Release OS resources associated with window.
+  // OS 자원을 해제하며 창을 파괴한다.
   void Destroy();
 
-  // Inserts |content| into the window tree.
+  // child 콘텐츠를 윈도우 트리에 주입한다.
   void SetChildContent(HWND content);
 
-  // Returns the backing Window handle to enable clients to set icon and other
-  // window properties. Returns nullptr if the window has been destroyed.
+  // HWND 핸들을 반환하며, 파괴된 창이면 nullptr을 돌려준다.
   HWND GetHandle();
 
-  // If true, closing this window will quit the application.
+  // true면 창을 닫을 때 앱 전체를 종료한다.
   void SetQuitOnClose(bool quit_on_close);
 
-  // Return a RECT representing the bounds of the current client area.
+  // 현재 클라이언트 영역 사각형을 반환한다.
   RECT GetClientArea();
 
  protected:
-  // Processes and route salient window messages for mouse handling,
-  // size change and DPI. Delegates handling of these to member overloads that
-  // inheriting classes can handle.
+  // 마우스/크기/DPI 관련 메시지를 처리한 뒤 하위 클래스 훅으로 위임한다.
   virtual LRESULT MessageHandler(HWND window,
                                  UINT const message,
                                  WPARAM const wparam,
                                  LPARAM const lparam) noexcept;
 
-  // Called when CreateAndShow is called, allowing subclass window-related
-  // setup. Subclasses should return false if setup fails.
+  // CreateAndShow 직후 호출되어 하위 클래스 설정을 수행한다.
   virtual bool OnCreate();
 
-  // Called when Destroy is called.
+  // Destroy 시점에 하위 클래스 정리 코드를 실행한다.
   virtual void OnDestroy();
 
  private:
   friend class WindowClassRegistrar;
 
-  // OS callback called by message pump. Handles the WM_NCCREATE message which
-  // is passed when the non-client area is being created and enables automatic
-  // non-client DPI scaling so that the non-client area automatically
-  // responds to changes in DPI. All other messages are handled by
-  // MessageHandler.
+  // WM_NCCREATE 등을 처리해 논클라이언트 영역 DPI 스케일링을 켠다.
   static LRESULT CALLBACK WndProc(HWND const window,
                                   UINT const message,
                                   WPARAM const wparam,
                                   LPARAM const lparam) noexcept;
 
-  // Retrieves a class instance pointer for |window|
+  // 윈도우 핸들에서 클래스 인스턴스 포인터를 얻는다.
   static Win32Window* GetThisFromHandle(HWND const window) noexcept;
 
-  // Update the window frame's theme to match the system theme.
+  // 시스템 테마에 맞춰 창 프레임 테마를 갱신한다.
   static void UpdateTheme(HWND const window);
 
   bool quit_on_close_ = false;
 
-  // window handle for top level window.
+  // 최상위 창 핸들.
   HWND window_handle_ = nullptr;
 
-  // window handle for hosted content.
+  // 플러터 콘텐츠가 들어가는 child 창 핸들.
   HWND child_content_ = nullptr;
 };
 

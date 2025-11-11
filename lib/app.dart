@@ -1,3 +1,4 @@
+// 앱 전역 상태를 주입하고 MaterialApp을 구성하는 루트 위젯.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,7 @@ import 'services/battery_service.dart';
 import 'services/notification_service.dart';
 import 'utils/theme.dart';
 
+/// 배터리/알림 서비스를 주입해 UI를 부트스트랩하는 최상위 위젯.
 class BigBatteryApp extends StatelessWidget {
   const BigBatteryApp({
     super.key,

@@ -1,4 +1,4 @@
-# Project-level configuration.
+# 리눅스 용 Runner 빌드를 정의하는 프로젝트 설정.
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 

@@ -1,8 +1,10 @@
+// 글꼴 크기·테마·알림 설정 및 앱 정보를 제공하는 화면.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/battery_provider.dart';
 
+/// 사용자 설정을 변경하고 앱 정보를 볼 수 있는 화면.
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -60,6 +62,7 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
+/// 앱 이름/버전/연락처를 보여주는 정보 카드.
 class _AppInfoCard extends StatelessWidget {
   const _AppInfoCard();
 
@@ -90,6 +93,7 @@ class _AppInfoCard extends StatelessWidget {
   }
 }
 
+/// 라벨과 값을 양쪽 정렬로 배치하는 재사용 행 위젯.
 class _InfoRow extends StatelessWidget {
   const _InfoRow({required this.label, required this.value});
 

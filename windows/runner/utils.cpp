@@ -1,3 +1,4 @@
+// Win32 유틸: 명령줄 인코딩 변환 등 도우미 함수.
 #include "utils.h"
 
 #include <flutter_windows.h>
@@ -22,7 +23,7 @@ void CreateAndAttachConsole() {
 }
 
 std::vector<std::string> GetCommandLineArguments() {
-  // Convert the UTF-16 command line arguments to UTF-8 for the Engine to use.
+  // UTF-16 명령줄 인자를 엔진이 쓰기 쉬운 UTF-8 로 변환.
   int argc;
   wchar_t** argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
   if (argv == nullptr) {
@@ -31,7 +32,7 @@ std::vector<std::string> GetCommandLineArguments() {
 
   std::vector<std::string> command_line_arguments;
 
-  // Skip the first argument as it's the binary name.
+  // 첫 번째 인자는 실행 파일 이름이므로 건너뜀.
   for (int i = 1; i < argc; i++) {
     command_line_arguments.push_back(Utf8FromUtf16(argv[i]));
   }
@@ -48,7 +49,7 @@ std::string Utf8FromUtf16(const wchar_t* utf16_string) {
   unsigned int target_length = ::WideCharToMultiByte(
       CP_UTF8, WC_ERR_INVALID_CHARS, utf16_string,
       -1, nullptr, 0, nullptr, nullptr)
-    -1; // remove the trailing null character
+    -1;  // 마지막 null 문자 제거
   int input_length = (int)wcslen(utf16_string);
   std::string utf8_string;
   if (target_length == 0 || target_length > utf8_string.max_size()) {

@@ -1,5 +1,6 @@
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
+// Win32 엔트리포인트: FlutterRunner 를 초기화하고 메시지 루프를 실행한다.
 #include <windows.h>
 
 #include "flutter_window.h"
@@ -7,14 +8,12 @@
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
-  // Attach to console when present (e.g., 'flutter run') or create a
-  // new console when running with a debugger.
+  // 콘솔이 있으면 붙고 없으면 디버거 실행 시 새 콘솔을 만든다.
   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
     CreateAndAttachConsole();
   }
 
-  // Initialize COM, so that it is available for use in the library and/or
-  // plugins.
+  // 라이브러리/플러그인에서 COM 을 사용할 수 있도록 초기화.
   ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
   flutter::DartProject project(L"data");

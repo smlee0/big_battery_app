@@ -1,9 +1,11 @@
+// 퍼센트 숫자/아이콘/에러 메시지를 그리는 배터리 표시 위젯.
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../providers/battery_provider.dart';
 import '../utils/theme.dart';
 
+/// 현재 배터리 수치와 충전 여부를 강조해 보여주는 컴포넌트.
 class BatteryDisplay extends StatelessWidget {
   const BatteryDisplay({
     super.key,

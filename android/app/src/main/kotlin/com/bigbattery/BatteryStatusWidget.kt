@@ -1,3 +1,4 @@
+// 홈 화면 배터리 위젯 업데이트/스케줄링을 담당하는 AppWidgetProvider.
 package com.bigbattery
 
 import android.app.AlarmManager
@@ -17,6 +18,9 @@ import android.widget.RemoteViews
 import kotlin.math.ceil
 import kotlin.math.max
 
+/**
+ * 시스템 브로드캐스트를 감지해 RemoteViews 를 갱신하는 배터리 위젯 프로바이더.
+ */
 class BatteryStatusWidget : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -70,6 +74,7 @@ class BatteryStatusWidget : AppWidgetProvider() {
 
     companion object {
         private var batteryChangeReceiver: BroadcastReceiver? = null
+        // 홈 위젯 갱신을 강제로 트리거하는 커스텀 액션
         private const val ACTION_REFRESH_WIDGET =
             "com.bigbattery.ACTION_REFRESH_WIDGET"
         private const val UPDATE_INTERVAL_MS = 5 * 60 * 1000L
@@ -153,6 +158,9 @@ class BatteryStatusWidget : AppWidgetProvider() {
     }
 }
 
+/**
+ * RemoteViews 를 실제로 구성해서 AppWidgetManager 에 적용하는 헬퍼.
+ */
 object BatteryWidgetUpdater {
 
     fun updateAllWidgets(context: Context) {

@@ -1,3 +1,4 @@
+// GTK 애플리케이션을 초기화하고 Flutter 뷰를 삽입하는 런너 구현.
 #include "my_application.h"
 
 #include <flutter_linux/flutter_linux.h>
@@ -14,19 +15,12 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
-// Implements GApplication::activate.
+// GApplication::activate 구현: 윈도우를 만들고 Flutter 뷰를 주입한다.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
-  // Use a header bar when running in GNOME as this is the common style used
-  // by applications and is the setup most users will be using (e.g. Ubuntu
-  // desktop).
-  // If running on X and not using GNOME then just use a traditional title bar
-  // in case the window manager does more exotic layout, e.g. tiling.
-  // If running on Wayland assume the header bar will work (may need changing
-  // if future cases occur).
   gboolean use_header_bar = TRUE;
 #ifdef GDK_WINDOWING_X11
   GdkScreen* screen = gtk_window_get_screen(window);
@@ -62,10 +56,9 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }
 
-// Implements GApplication::local_command_line.
+// GApplication::local_command_line 구현: 인자 정리 후 activate 호출.
 static gboolean my_application_local_command_line(GApplication* application, gchar*** arguments, int* exit_status) {
   MyApplication* self = MY_APPLICATION(application);
-  // Strip out the first argument as it is the binary name.
   self->dart_entrypoint_arguments = g_strdupv(*arguments + 1);
 
   g_autoptr(GError) error = nullptr;
@@ -81,25 +74,17 @@ static gboolean my_application_local_command_line(GApplication* application, gch
   return TRUE;
 }
 
-// Implements GApplication::startup.
+// GApplication::startup 구현: 기본 스타트업 훅을 호출한다.
 static void my_application_startup(GApplication* application) {
-  //MyApplication* self = MY_APPLICATION(object);
-
-  // Perform any actions required at application startup.
-
   G_APPLICATION_CLASS(my_application_parent_class)->startup(application);
 }
 
-// Implements GApplication::shutdown.
+// GApplication::shutdown 구현: 종료 훅만 호출한다.
 static void my_application_shutdown(GApplication* application) {
-  //MyApplication* self = MY_APPLICATION(object);
-
-  // Perform any actions required at application shutdown.
-
   G_APPLICATION_CLASS(my_application_parent_class)->shutdown(application);
 }
 
-// Implements GObject::dispose.
+// GObject::dispose 구현: 엔트리포인트 인자를 해제한다.
 static void my_application_dispose(GObject* object) {
   MyApplication* self = MY_APPLICATION(object);
   g_clear_pointer(&self->dart_entrypoint_arguments, g_strfreev);
@@ -117,10 +102,6 @@ static void my_application_class_init(MyApplicationClass* klass) {
 static void my_application_init(MyApplication* self) {}
 
 MyApplication* my_application_new() {
-  // Set the program name to the application ID, which helps various systems
-  // like GTK and desktop environments map this running application to its
-  // corresponding .desktop file. This ensures better integration by allowing
-  // the application to be recognized beyond its binary name.
   g_set_prgname(APPLICATION_ID);
 
   return MY_APPLICATION(g_object_new(my_application_get_type(),

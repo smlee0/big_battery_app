@@ -1,5 +1,7 @@
+// 앱에서 사용하는 색상 팔레트와 Light/Dark 테마 팩토리.
 import 'package:flutter/material.dart';
 
+/// 전체 UI에서 공통으로 쓰는 핵심 색상 정의.
 class AppColors {
   const AppColors._();
 
@@ -10,6 +12,7 @@ class AppColors {
   static const Color alertRed = Color(0xFFE74C3C);
 }
 
+/// 라이트/다크 ThemeData 를 반환하는 유틸리티.
 class AppTheme {
   static ThemeData light() {
     final base = ThemeData(

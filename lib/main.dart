@@ -1,3 +1,4 @@
+// Flutter 엔진 초기화 후 BigBatteryApp을 실행하는 엔트리포인트.
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

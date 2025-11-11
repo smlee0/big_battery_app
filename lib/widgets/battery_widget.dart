@@ -1,8 +1,10 @@
+// 메인 배터리 카드 컨테이너와 그림자/그라데이션을 정의한 위젯.
 import 'package:flutter/material.dart';
 
 import '../providers/battery_provider.dart';
 import 'battery_display.dart';
 
+/// 배터리 상태를 카드 형태로 감싸 BatteryDisplay 를 렌더링한다.
 class BatteryWidget extends StatelessWidget {
   const BatteryWidget({
     super.key,

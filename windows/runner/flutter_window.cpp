@@ -1,3 +1,4 @@
+// Win32Window 를 확장해 FlutterView 라이프사이클을 관리한다.
 #include "flutter_window.h"
 
 #include <optional>
@@ -16,11 +17,10 @@ bool FlutterWindow::OnCreate() {
 
   RECT frame = GetClientArea();
 
-  // The size here must match the window dimensions to avoid unnecessary surface
-  // creation / destruction in the startup path.
+  // 초기 구동 시 불필요한 surface 재생성을 막기 위해 창 크기와 맞춘다.
   flutter_controller_ = std::make_unique<flutter::FlutterViewController>(
       frame.right - frame.left, frame.bottom - frame.top, project_);
-  // Ensure that basic setup of the controller was successful.
+  // 컨트롤러 초기화가 성공했는지 확인.
   if (!flutter_controller_->engine() || !flutter_controller_->view()) {
     return false;
   }
@@ -31,9 +31,7 @@ bool FlutterWindow::OnCreate() {
     this->Show();
   });
 
-  // Flutter can complete the first frame before the "show window" callback is
-  // registered. The following call ensures a frame is pending to ensure the
-  // window is shown. It is a no-op if the first frame hasn't completed yet.
+  // 첫 프레임 이전에도 창이 보이도록 대기 프레임을 예약한다.
   flutter_controller_->ForceRedraw();
 
   return true;
@@ -51,7 +49,7 @@ LRESULT
 FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
                               WPARAM const wparam,
                               LPARAM const lparam) noexcept {
-  // Give Flutter, including plugins, an opportunity to handle window messages.
+  // 플러터/플러그인이 메시지를 처리할 기회를 먼저 준다.
   if (flutter_controller_) {
     std::optional<LRESULT> result =
         flutter_controller_->HandleTopLevelWindowProc(hwnd, message, wparam,

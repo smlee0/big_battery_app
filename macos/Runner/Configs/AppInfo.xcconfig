@@ -1,14 +1,6 @@
-// Application-level settings for the Runner target.
-//
-// This may be replaced with something auto-generated from metadata (e.g., pubspec.yaml) in the
-// future. If not, the values below would default to using the project name when this becomes a
-// 'flutter create' template.
-
-// The application's name. By default this is also the title of the Flutter window.
+// macOS Runner 타깃에서 사용하는 제품명/번들 ID/저작권 설정.
 PRODUCT_NAME = big_battery_app
 
-// The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.bigbattery.bigBatteryApp
 
-// The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.bigbattery. All rights reserved.

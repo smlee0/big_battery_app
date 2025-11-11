@@ -1,3 +1,4 @@
+// FlutterView 를 호스팅하는 Win32 창 선언.
 #ifndef RUNNER_FLUTTER_WINDOW_H_
 #define RUNNER_FLUTTER_WINDOW_H_
 
@@ -8,25 +9,25 @@
 
 #include "win32_window.h"
 
-// A window that does nothing but host a Flutter view.
+// Flutter 뷰만 호스팅하는 특수화된 Win32Window.
 class FlutterWindow : public Win32Window {
  public:
-  // Creates a new FlutterWindow hosting a Flutter view running |project|.
-  explicit FlutterWindow(const flutter::DartProject& project);
+  // 지정된 Flutter 프로젝트를 구동하는 창을 생성한다.
+ explicit FlutterWindow(const flutter::DartProject& project);
   virtual ~FlutterWindow();
 
  protected:
-  // Win32Window:
+  // Win32Window 오버라이드
   bool OnCreate() override;
   void OnDestroy() override;
   LRESULT MessageHandler(HWND window, UINT const message, WPARAM const wparam,
                          LPARAM const lparam) noexcept override;
 
  private:
-  // The project to run.
+  // 실행할 Flutter 프로젝트.
   flutter::DartProject project_;
 
-  // The Flutter instance hosted by this window.
+  // 창 안에 호스팅되는 FlutterViewController 인스턴스.
   std::unique_ptr<flutter::FlutterViewController> flutter_controller_;
 };
 

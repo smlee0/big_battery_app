@@ -98,3 +98,9 @@ ios/
 - Flutter 명령이 특정 SDK로 고정되지 않으면 `which flutter`로 실제 경로를 확인하고, 잘못된 PATH를 셸 설정에서 제거한다.
 - `Execution failed for task :app:processReleaseResources` 발생 시 `flutter clean && flutter pub get` 후 다시 빌드한다.
 - 홈 위젯이 업데이트되지 않으면 `adb shell dumpsys alarm | rg ACTION_REFRESH_WIDGET`으로 예약된 알람을 확인하거나, `adb shell am broadcast -a com.bigbattery.ACTION_REFRESH_WIDGET`으로 수동 트리거한다.
+
+## 9. 주석 & 문서화 가이드
+- **파일 헤더**: 각 파일 최상단에 역할을 명사형 또는 간결한 서술형으로 요약 (`// 배터리 상태 조회 서비스` 등).
+- **클래스/함수**: 중요 진입점과 override 시작 부분에 기능을 한 줄로 설명하며 문장 끝에 마침표 대신 어미 생략 또는 명사형 사용.
+- **불필요한 텍스트 제거**: 템플릿이 생성한 장황한 영어 주석은 의미 없으면 제거, 필요한 경우 한글로 재작성.
+- **언어 통일**: 주석 기본 언어는 한국어, 고유명/코드 식별자는 영어 그대로 유지.

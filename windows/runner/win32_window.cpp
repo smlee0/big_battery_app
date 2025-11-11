@@ -1,3 +1,4 @@
+// Win32Window 구현: DPI 처리, 테마 동기화, 메시지 라우팅.
 #include "win32_window.h"
 
 #include <dwmapi.h>
@@ -7,38 +8,29 @@
 
 namespace {
 
-/// Window attribute that enables dark mode window decorations.
-///
-/// Redefined in case the developer's machine has a Windows SDK older than
-/// version 10.0.22000.0.
-/// See: https://docs.microsoft.com/windows/win32/api/dwmapi/ne-dwmapi-dwmwindowattribute
+// 다크 모드 테마를 켜는 윈도우 속성 (낮은 SDK 버전 호환).
 #ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
 #define DWMWA_USE_IMMERSIVE_DARK_MODE 20
 #endif
 
 constexpr const wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
 
-/// Registry key for app theme preference.
-///
-/// A value of 0 indicates apps should use dark mode. A non-zero or missing
-/// value indicates apps should use light mode.
+// 앱 테마 선호도를 읽어오는 레지스트리 키/값.
 constexpr const wchar_t kGetPreferredBrightnessRegKey[] =
   L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
 constexpr const wchar_t kGetPreferredBrightnessRegValue[] = L"AppsUseLightTheme";
 
-// The number of Win32Window objects that currently exist.
+// 생성된 Win32Window 인스턴스 개수.
 static int g_active_window_count = 0;
 
 using EnableNonClientDpiScaling = BOOL __stdcall(HWND hwnd);
 
-// Scale helper to convert logical scaler values to physical using passed in
-// scale factor
+// 논리 좌표를 주어진 스케일 팩터로 물리 좌표로 변환.
 int Scale(int source, double scale_factor) {
   return static_cast<int>(source * scale_factor);
 }
 
-// Dynamically loads the |EnableNonClientDpiScaling| from the User32 module.
-// This API is only needed for PerMonitor V1 awareness mode.
+// User32 모듈에서 EnableNonClientDpiScaling 함수를 동적으로 불러온다.
 void EnableFullDpiSupportIfAvailable(HWND hwnd) {
   HMODULE user32_module = LoadLibraryA("User32.dll");
   if (!user32_module) {
@@ -55,12 +47,12 @@ void EnableFullDpiSupportIfAvailable(HWND hwnd) {
 
 }  // namespace
 
-// Manages the Win32Window's window class registration.
+// Win32Window 등록/해제를 관리하는 싱글턴 레지스트라.
 class WindowClassRegistrar {
  public:
   ~WindowClassRegistrar() = default;
 
-  // Returns the singleton registrar instance.
+  // 싱글턴 인스턴스를 반환한다.
   static WindowClassRegistrar* GetInstance() {
     if (!instance_) {
       instance_ = new WindowClassRegistrar();
@@ -68,12 +60,10 @@ class WindowClassRegistrar {
     return instance_;
   }
 
-  // Returns the name of the window class, registering the class if it hasn't
-  // previously been registered.
+  // 아직 등록되지 않았다면 등록 후 클래스 이름을 반환한다.
   const wchar_t* GetWindowClass();
 
-  // Unregisters the window class. Should only be called if there are no
-  // instances of the window.
+  // 더 이상 창 인스턴스가 없을 때 클래스 등록을 해제한다.
   void UnregisterWindowClass();
 
  private:
@@ -200,7 +190,7 @@ Win32Window::MessageHandler(HWND hwnd,
     case WM_SIZE: {
       RECT rect = GetClientArea();
       if (child_content_ != nullptr) {
-        // Size and position the child window.
+        // child 창의 위치와 크기를 부모 클라이언트 영역에 맞춘다.
         MoveWindow(child_content_, rect.left, rect.top, rect.right - rect.left,
                    rect.bottom - rect.top, TRUE);
       }
@@ -264,12 +254,12 @@ void Win32Window::SetQuitOnClose(bool quit_on_close) {
 }
 
 bool Win32Window::OnCreate() {
-  // No-op; provided for subclasses.
+  // 기본 구현 없음: 필요 시 하위 클래스가 override.
   return true;
 }
 
 void Win32Window::OnDestroy() {
-  // No-op; provided for subclasses.
+  // 기본 구현 없음: 필요 시 하위 클래스가 override.
 }
 
 void Win32Window::UpdateTheme(HWND const window) {

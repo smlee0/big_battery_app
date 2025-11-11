@@ -1,3 +1,4 @@
+// 배터리 상태 조회, 설정 유지, 저전력 알림을 담당하는 ChangeNotifier.
 import 'dart:async';
 import 'dart:io' show Platform;
 
@@ -9,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/battery_service.dart';
 import '../services/notification_service.dart';
 
+/// UI에서 선택 가능한 텍스트 크기 옵션.
 enum BatteryTextSize { large, extraLarge }
 
 extension BatteryTextSizeX on BatteryTextSize {
@@ -23,6 +25,7 @@ extension BatteryTextSizeX on BatteryTextSize {
       };
 }
 
+/// 사용자가 선택한 텍스트 크기, 테마, 알림 여부를 보관하는 불변 모델.
 class BatterySettings {
   const BatterySettings({
     this.textSize = BatteryTextSize.extraLarge,
@@ -80,6 +83,7 @@ class BatterySettings {
   }
 }
 
+/// 현재 배터리 잔량과 상태, 마지막 갱신 시각을 담는 스냅샷.
 class BatteryStatus {
   const BatteryStatus({
     required this.level,
@@ -112,6 +116,7 @@ class BatteryStatus {
   }
 }
 
+/// 배터리 상태를 주기적으로 갱신하고 설정/알림 상태를 관리하는 Provider.
 class BatteryProvider extends ChangeNotifier {
   BatteryProvider({
     required this.batteryService,
@@ -219,8 +224,7 @@ class BatteryProvider extends ChangeNotifier {
         },
       );
     } on MissingPluginException {
-      // ignore: avoid_print
-      debugPrint('Battery state stream is not available on this platform.');
+      debugPrint('이 플랫폼에서는 배터리 상태 스트림을 지원하지 않습니다.');
     }
   }
 
@@ -243,7 +247,7 @@ class BatteryProvider extends ChangeNotifier {
       });
       return true;
     } on MissingPluginException {
-      // ignore if the native channel is not available
+      // 네이티브 채널이 없을 때는 스냅샷 스트림을 사용하지 않음
       return false;
     }
   }

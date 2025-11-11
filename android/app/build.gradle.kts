@@ -5,13 +5,14 @@ val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
 }
+// 릴리스 서명에 필요한 네 가지 키가 모두 채워졌는지 확인
 val hasReleaseKeystore = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
     .all { !keystoreProperties.getProperty(it).isNullOrBlank() }
 
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // Flutter Gradle 플러그인은 Android/Kotlin 플러그인 이후에 적용해야 함
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -30,10 +31,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.bigbattery"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -49,6 +47,7 @@ android {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
             } else {
+                // keystore 미지정 시 디버그 설정으로 대체해 빌드가 멈추지 않게 함
                 initWith(debug)
                 println("Warning: key.properties not found. Using debug signing for release builds.")
             }
@@ -57,7 +56,7 @@ android {
 
     buildTypes {
         release {
-            // Switch to the dedicated release signing config (falls back to debug if missing).
+            // 릴리스 서명 구성을 우선 사용하고 값이 없으면 디버그 설정으로 대체
             signingConfig = signingConfigs.getByName("release")
         }
     }

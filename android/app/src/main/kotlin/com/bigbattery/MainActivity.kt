@@ -1,3 +1,4 @@
+// Flutter 엔진과 안드로이드 배터리 브로드캐스트를 연결하는 Activity.
 package com.bigbattery
 
 import android.content.BroadcastReceiver
@@ -9,9 +10,13 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 
+/**
+ * 배터리 EventChannel 을 등록하고 Flutter 쪽으로 스냅샷을 전달하는 기본 Activity.
+ */
 class MainActivity : FlutterActivity() {
 
     companion object {
+        // Flutter 쪽 EventChannel과 동일한 식별자
         private const val BATTERY_EVENT_CHANNEL =
             "com.bigbattery/battery_updates"
     }
@@ -25,6 +30,9 @@ class MainActivity : FlutterActivity() {
     }
 }
 
+/**
+ * ACTION_BATTERY_CHANGED 브로드캐스트를 수신해 EventChannel 로 전달한다.
+ */
 private class BatteryEventsStreamHandler(
     private val context: Context
 ) : EventChannel.StreamHandler {
