@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "big_battery_widget_app" "\0"
+            VALUE "CompanyName", "com.bigbattery" "\0"
+            VALUE "FileDescription", "big_battery_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "big_battery_widget_app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "big_battery_widget_app.exe" "\0"
-            VALUE "ProductName", "big_battery_widget_app" "\0"
+            VALUE "InternalName", "big_battery_app" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.bigbattery. All rights reserved." "\0"
+            VALUE "OriginalFilename", "big_battery_app.exe" "\0"
+            VALUE "ProductName", "big_battery_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

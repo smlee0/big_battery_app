@@ -9,8 +9,8 @@ import 'services/battery_service.dart';
 import 'services/notification_service.dart';
 import 'utils/theme.dart';
 
-class BigBatteryWidgetApp extends StatelessWidget {
-  const BigBatteryWidgetApp({
+class BigBatteryApp extends StatelessWidget {
+  const BigBatteryApp({
     super.key,
     required this.notificationService,
     required this.sharedPreferences,

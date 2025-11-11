@@ -1,6 +1,6 @@
 {
-    "name": "big_battery_widget_app",
-    "short_name": "big_battery_widget_app",
+    "name": "big_battery_app",
+    "short_name": "big_battery_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

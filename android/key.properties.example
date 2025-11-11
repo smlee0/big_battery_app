@@ -1,0 +1,6 @@
+# Copy this file to android/key.properties and fill in the secrets.
+# Never commit the populated key.properties or the referenced keystore.
+storeFile=android/app/bigbattery-release-key.jks
+storePassword=your-store-password
+keyAlias=bigbattery-key
+keyPassword=your-key-password

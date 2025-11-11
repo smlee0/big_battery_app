@@ -9,7 +9,7 @@ class BatteryService {
 
   final Battery _battery;
   static const _batteryEventChannel =
-      EventChannel('com.example.big_battery_widget_app/battery_updates');
+      EventChannel('com.bigbattery/battery_updates');
 
   Future<int> getBatteryLevel() => _battery.batteryLevel;
 

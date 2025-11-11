@@ -1,4 +1,4 @@
-package com.example.big_battery_widget_app
+package com.bigbattery
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -71,7 +71,7 @@ class BatteryStatusWidget : AppWidgetProvider() {
     companion object {
         private var batteryChangeReceiver: BroadcastReceiver? = null
         private const val ACTION_REFRESH_WIDGET =
-            "com.example.big_battery_widget_app.ACTION_REFRESH_WIDGET"
+            "com.bigbattery.ACTION_REFRESH_WIDGET"
         private const val UPDATE_INTERVAL_MS = 5 * 60 * 1000L
 
         private fun registerBatteryReceiver(context: Context) {

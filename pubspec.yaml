@@ -1,4 +1,4 @@
-name: big_battery_widget_app
+name: big_battery_app
 description: "큰 배터리 위젯을 제공하는 접근성 친화 Flutter 앱."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

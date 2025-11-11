@@ -1,7 +1,7 @@
-# 프로젝트 명세서: Big Battery Widget App
+# 프로젝트 명세서: big_battery_app
 
 ## 🧭 프로젝트 개요
-**프로젝트명:** `big_battery_widget_app`  
+**프로젝트명:** `big_battery_app`  
 **플랫폼:** Flutter 3.x  
 **목적:** 부모님 세대가 보기 쉽게, **큰 글씨와 단순한 디자인으로 배터리 잔량을 표시하는 홈 화면 위젯 앱**
 
@@ -90,8 +90,8 @@ lib/
 ## 📦 빌드 및 실행
 1. 프로젝트 초기화
    ```bash
-   flutter create big_battery_widget_app
-   cd big_battery_widget_app
+   flutter create big_battery_app
+   cd big_battery_app
    flutter pub add battery_plus provider shared_preferences flutter_local_notifications
    ```
 2. 실행
@@ -127,10 +127,19 @@ Codex가 다음을 자동 생성해야 함:
 ## 🧾 네이밍 규칙
 | 항목 | 규칙 |
 |------|------|
-| 패키지명 | `big_battery_widget_app` |
-| 루트 클래스 | `BigBatteryWidgetApp` |
+| 패키지명 | `big_battery_app` |
+| 루트 클래스 | `BigBatteryApp` |
 | 메인 화면 | `BatteryWidgetScreen` |
 | 상태관리 클래스 | `BatteryProvider` |
+
+---
+
+## 🔖 플랫폼 식별자
+- Android Application ID (namespace): `com.bigbattery`
+- iOS Bundle Identifier (Runner): `com.bigbattery.bigBatteryApp`
+- macOS Bundle Identifier: `com.bigbattery.bigBatteryApp`
+- Linux Application ID: `com.bigbattery`
+- Web manifest name/short_name: `big_battery_app` (배포 시 브랜드명으로 교체)
 
 ---
 

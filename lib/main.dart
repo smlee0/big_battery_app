@@ -13,7 +13,7 @@ Future<void> main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
 
   runApp(
-    BigBatteryWidgetApp(
+    BigBatteryApp(
       notificationService: notificationService,
       sharedPreferences: sharedPreferences,
     ),

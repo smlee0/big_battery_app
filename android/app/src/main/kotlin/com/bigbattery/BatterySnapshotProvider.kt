@@ -1,4 +1,4 @@
-package com.example.big_battery_widget_app
+package com.bigbattery
 
 import android.content.Context
 import android.content.Intent

@@ -1,4 +1,4 @@
-package com.example.big_battery_widget_app
+package com.bigbattery
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,7 +13,7 @@ class MainActivity : FlutterActivity() {
 
     companion object {
         private const val BATTERY_EVENT_CHANNEL =
-            "com.example.big_battery_widget_app/battery_updates"
+            "com.bigbattery/battery_updates"
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
